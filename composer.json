@@ -1,0 +1,17 @@
+{
+    "name": "iphp/tree-bundle",
+    "type": "bundle",
+    "description": "tree management for doctrine",
+    "keywords": ["symfony"],
+    "homepage": "http://symfonydev.ru",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vitiko",
+            "email": "vitiko@mail.ru"
+        }
+    ],
+ 
+  
+	
+}
