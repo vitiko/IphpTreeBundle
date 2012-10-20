@@ -10,7 +10,12 @@
             "name": "Vitiko",
             "email": "vitiko@mail.ru"
         }
-    ]
+    ],
+	
+	"autoload": {
+        "psr-0": { "Iphp\\TreeBundle": "" }
+    },
+    "target-dir": "Iphp/TreeBundle"
  
   
 	
