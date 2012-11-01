@@ -11,4 +11,8 @@ interface TreeNodeWrapperInterface
     public function parents();
 
 
+
+    public function getNode();
+
+    public function getWrapped();
 }

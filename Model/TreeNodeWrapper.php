@@ -34,6 +34,10 @@ class  TreeNodeWrapper implements TreeNodeWrapperInterface
        return $this->node;
     }
 
+    public function getWrapped()
+    {
+        return $this->node;
+    }
 
     function __call($method, $args)
     {

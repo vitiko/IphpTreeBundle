@@ -19,14 +19,14 @@ class NestedTreeRepository extends GedmoNestedTreeRepository
 
 
 
-    function getTreeRecordset( $prepareQueryBuilder = null)
+    function getTreeRecordset( $prepareQueryBuilder = null, $options = array())
     {
         $qb = $this->createQueryBuilder('r');
 
         if ($prepareQueryBuilder) $prepareQueryBuilder($qb);
 
 
-        return new \Iphp\TreeBundle\Model\TreeNodeIterator($qb->getQuery()->getResult());
+        return new \Iphp\TreeBundle\Model\TreeNodeIterator($qb->getQuery()->getResult(), $options);
 
         /*$repository->createQueryBuilder('r')
                         ->andWhere('r.level > 0')
