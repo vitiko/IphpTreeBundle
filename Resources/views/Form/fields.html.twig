@@ -1,0 +1,26 @@
+{% block treenode_choice_widget %}
+
+<select {{ block('widget_attributes') }}>
+    {% if empty_value is not none %}
+    <option value="">{{ empty_value|trans({}, translation_domain) }}</option>
+    {% endif %}
+
+    {% set options = choices %}
+    {{ block('choice_widget_options_tree') }}
+</select>
+
+
+
+{% endblock treenode_choice_widget %}
+
+
+
+{% block choice_widget_options_tree %}
+{% spaceless %}
+{% for choice in options %}
+<option value="{{ choice.value }}"{% if choice is selectedchoice(value) %} selected="selected"{% endif %}>
+    {% if choice.data.level > 0%}{% for i in range(0, choice.data.level) %}&nbsp;&nbsp;&nbsp;{% endfor %}{% endif %}
+    {{ choice.label|trans({}, translation_domain) }}</option>
+{% endfor %}
+{% endspaceless %}
+{% endblock choice_widget_options_tree %}

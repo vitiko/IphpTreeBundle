@@ -17,7 +17,7 @@ class ModelManager extends \Sonata\DoctrineORMAdminBundle\Model\ModelManager
 
         if (!$changeParent)
         {
-            if ($after == 0) $repository->persistAsFirstChild($node);
+            if ($after == '0') $repository->persistAsFirstChild($node);
             else
             {
                 $afterNode = $this->find(get_class($node), $after);
@@ -31,14 +31,14 @@ class ModelManager extends \Sonata\DoctrineORMAdminBundle\Model\ModelManager
                 if (!$afterNode )   throw new ModelManagerException ('Не найден узел c id='.$after);
 
                 if ($afterNode->getParentId() != $node->getParentId())
-                    throw new ModelManagerException ('Изменение родителя пока не реализовано');
+                    throw new ModelManagerException ('Изменение родителя пока не реализовано - '.$after);
                 $repository->persistAsNextSiblingOf($node, $afterNode);
             }
             $entityManager->flush();
         }
         else
         {
-            throw new ModelManagerException ('Изменение родителя пока не реализовано');
+            throw new ModelManagerException ('Изменение родителя пока не реализовано '. $node->getParentId().' '.$parent);
         }
 
     }

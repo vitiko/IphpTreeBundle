@@ -4,16 +4,18 @@
 
 {% block notice %}
 {{ parent() }}
-
-
 <div id="alertmsgajax" class="alert alert-block" style="display:none"><div id="alertmsgajaxtxt"
      style="margin:0px;background:url('/bundles/iphpcore/images/loading.gif') no-repeat 0px 5px; padding-left:25px">Сохранение изменений</div></div>
-{% endblock %}
+{% endblock notice %}
 
 
 {# фильтры не нужны #}
 {% block list_filters %}
 {% endblock list_filters %}
+
+
+
+
 
 {% block list_table %}
 
@@ -22,12 +24,9 @@
   {% set batchactions = admin.batchactions %}
 
   {% if treeIterator.count > 0 %}
-
-
     <style>
-
 		ol.sortable, ol.sortable ol {
-			margin: 0 0 0 25px;
+			margin: 0 0 0 35px;
 			padding: 0;
 			list-style-type: none;
 		}
@@ -36,16 +35,18 @@
        ol.sortable li { padding-bottom:0px;}
 
        .sortable  div { width:100%; cursor: move;margin:0px;padding:0px;}
-       .trtable { width:100%; border-collapse: collapse;   border:1px solid #DDD;  }
-       .trtable tr td { border: 1px solid #DDD; padding:3px}
-       .sonata-ba-list-field-batch  { width:30px}
-       .sonata-bc li { line-height: 0px;  }
-       .sonata-bc table { margin-bottom: 1px} /* Изначально 18*/
+       .trtable { width:100%; border-collapse: collapse /*;   border:1px solid #DDD;*/  }
+       .trtable tr td { border-bottom: 1px solid #DDD; padding:8px}
+       .trtable { margin-bottom: 2px}
+    .sonata-ba-list-field-batch  { width:30px}
+            /*   .sonata-bc li { line-height: 0px;  }
+     .sonata-bc table { margin-bottom: 1px} *//* Изначально 18*/
     </style>
 
     <form action="{{ admin.generateUrl('batch', admin.filterParameters) }}" method="POST" >
 
     {% block table_body %}
+
       {% macro nodeOutput (wrappedNode,admin) %}
         <li class="nodeLi" id="#node{{ wrappedNode.id }}">
           <div>
@@ -67,7 +68,9 @@
 
 
      {% set rootWrappedNode =   treeIterator.current%}
-     <table class="trtable"><tr>
+
+     <!-- root node -->
+     <table class="trtable" id="rootnodetable" nodeId="{{ rootWrappedNode.id }}"><tr>
          {% for field_description in admin.list.elements %}
                            {{ rootWrappedNode.node|render_list_element(field_description) }}
          {% endfor %}
@@ -86,6 +89,8 @@
 
 
             {% if batchactions|length > 0%}
+
+        {#
                 <script type="text/javascript">
                     jQuery(document).ready(function($){
                        $('#list_batch_checkbox').click(function(){
@@ -111,6 +116,8 @@
 
                     <input type="submit" class="btn primary" value="{% trans from 'SonataAdminBundle' %}btn_batch{% endtrans %}" />
                 </div>
+
+        #}
             {% endif %}
 
 
@@ -127,6 +134,8 @@
 
 <script>
 $(document).ready(function(){
+
+
 		$('ol.sortable').nestedSortable({
 			disableNesting: 'no-nest',
 			forcePlaceholderSize: true,
@@ -146,16 +155,25 @@ $(document).ready(function(){
              $('#alertmsgajaxtxt').html ('Сохранение изменений');
              $('#alertmsgajax').show('slow');
               var curItem = ui.item;
+
+                console.log (curItem);
               var parentItem = curItem.parent('ol').parent('li');
+
+                //Родитель -
+                if (!parentItem.get(0)) var parentItemId =  $('#rootnodetable').attr('nodeId');
+                else
+                {
+                    var parentItemId = parentItem.length ?  parentItem.attr ('id').substr (5) : 0;
+                }
+                console.log (parentItemId);
               var prevItem = curItem.prev ('li');
               var itemId = curItem.attr ('id').substr (5);
-              var parentItemId = parentItem.length ?  parentItem.attr ('id').substr (5) : 0;
               var  prevItemId = prevItem.length ?  prevItem.attr ('id').substr (5) : 0;
 
 
 
 
-                var urlTpl = '{{ admin.generateUrl('chpos', { 'id': '_id_', 'parent': '_parent_', 'after': '_after_'}) }}';
+                var urlTpl = '{{ admin.generateUrl('chpos', { 'moveNodeId': '_id_', 'moveNodeParent': '_parent_', 'moveNodeAfter': '_after_'}) }}';
 
                 url = urlTpl.replace ('_id_', itemId).replace ('_parent_',parentItemId).replace ('_after_',prevItemId);
 
@@ -185,4 +203,5 @@ $(document).ready(function(){
 
 </script>
 
+<br><br>
 {% endblock list_table %}

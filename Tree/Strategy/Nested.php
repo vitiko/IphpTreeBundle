@@ -114,9 +114,14 @@ class Nested implements Strategy
     }
 
     /**
-     * {@inheritdoc}
+     * Operations on tree node insertion
+     *
+     * @param EntityManager $em
+     * @param object $object - node
+     * @param AdapterInterface $ea - event adapter
+     * @return void
      */
-    public function processScheduledInsertion($em, $node, AdapterInterface $ea)
+    public function processScheduledInsertion( $em, $node, AdapterInterface $ea)
     {
         $meta = $em->getClassMetadata(get_class($node));
         $config = $this->listener->getConfiguration($em, $meta->name);
@@ -131,8 +136,17 @@ class Nested implements Strategy
         }
 
 
+      //  print_r ($config);
+       // exit();
+
         //Vitiko added
-        $meta->getReflectionProperty('fullPath')->setValue($node, '/');
+
+        $properties = $meta->getReflectionProperties();
+        if (isset($properties['fullPath'])) $meta->getReflectionProperty('fullPath')->setValue($node, '/');
+
+
+     //   $meta->
+
     }
 
 
@@ -443,7 +457,8 @@ class Nested implements Strategy
             }
 
 
-            if (isset($wrappedParent))
+            $properties = $meta->getReflectionProperties();
+            if (isset($properties['fullPath']) && isset($wrappedParent))
                 $this->setPathData($qb, $wrapped, isset($newParent) ? $newParent : $wrappedParent);
 
             $qb->set('node.' . $config['left'], $left + $diff);

@@ -9,16 +9,16 @@ use Sonata\AdminBundle\Controller\CRUDController as SonataCRUDController;
 class CRUDController extends SonataCRUDController
 {
 
-    public function changePositionAction($id, $parent, $after)
+    public function changePositionAction($moveNodeId, $moveNodeParent, $moveNodeAfter)
     {
 
-        $node = $this->admin->getObject($id);
+        $node = $this->admin->getObject($moveNodeId);
 
-        if ($parent == 0) $parent = 1;
+        if ($moveNodeParent == 0) $moveNodeParent = 1;
 
 
         try {
-            $this->admin->changePosition($node, $parent, $after);
+            $this->admin->changePosition($node, $moveNodeParent, $moveNodeAfter);
 
             $result = true;
             $message = 'ОК';
@@ -29,9 +29,9 @@ class CRUDController extends SonataCRUDController
             $result = false;
         }
         $response = new Response(json_encode(
-            array('id' => $id,
-                'parent' => $parent,
-                'after' => $after,
+            array('id' => $moveNodeId,
+                'parent' => $moveNodeParent,
+                'after' => $moveNodeAfter,
                 'result' => $result,
                 'message' => $message)));
         $response->headers->set('Content-Type', 'application/json');

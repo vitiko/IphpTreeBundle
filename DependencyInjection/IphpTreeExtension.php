@@ -23,10 +23,11 @@ class IphpTreeExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
 
-
+        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         if (array_key_exists ('SonataAdminBundle', $container->getParameter('kernel.bundles'))) {
-            $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+
             $loader->load('admin.xml');
         }
+        $loader->load('services.xml');
     }
 }

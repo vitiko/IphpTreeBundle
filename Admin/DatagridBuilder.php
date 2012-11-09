@@ -1,8 +1,8 @@
 <?php
 
 namespace Iphp\TreeBundle\Admin;
-
-
+use Sonata\AdminBundle\Admin\AdminInterface;
+use Sonata\DoctrineORMAdminBundle\Datagrid\Pager;
 
 class DatagridBuilder extends \Sonata\DoctrineORMAdminBundle\Builder\DatagridBuilder
 {
