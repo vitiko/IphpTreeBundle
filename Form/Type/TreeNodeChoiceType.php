@@ -44,7 +44,8 @@ class TreeNodeChoiceType extends AbstractType
             {
                 $qb = $em->getRepository($options['class'])
                     ->createQueryBuilder('n')
-                    ->orderBy('n.left');
+                    ->orderBy ('n.root')
+                    ->addOrderBy('n.left');
 
                 if  ($options['root']) $qb->where ('n.root = :root')->setParameter ('root',$options['root']);
 
