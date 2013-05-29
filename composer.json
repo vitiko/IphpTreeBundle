@@ -18,7 +18,7 @@
     
     
     "require": {
-    	"stof/doctrine-extensions-bundle":"dev-master"
+    	"stof/doctrine-extensions-bundle":"1.0.2"
     },     
     
     "target-dir": "Iphp/TreeBundle"
