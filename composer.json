@@ -1,8 +1,8 @@
 {
     "name": "iphp/tree-bundle",
     "type": "bundle",
-    "description": "tree management for doctrine",
-    "keywords": ["Symfony","Doctrine ORM","Tree"],
+    "description": "Mix materialized path and nested tree for doctrine entities",
+    "keywords": ["Symfony","Doctrine ORM","Sonata admin tree", "Materialized path", "Nested set"],
     "homepage": "http://symfonydev.ru",
     "license": "MIT",
     "authors": [
