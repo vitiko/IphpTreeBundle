@@ -4,6 +4,7 @@ namespace Iphp\TreeBundle\Controller;
 
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sonata\AdminBundle\Controller\CRUDController as SonataCRUDController;
 
 class CRUDController extends SonataCRUDController
@@ -22,9 +23,7 @@ class CRUDController extends SonataCRUDController
 
             $result = true;
             $message = 'ОК';
-        }
-        catch (\Exception $exception)
-        {
+        } catch (\Exception $exception) {
             $message = $exception->getMessage();
             $result = false;
         }

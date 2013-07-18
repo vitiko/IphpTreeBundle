@@ -1,0 +1,7 @@
+node_tree:
+    pattern:      /
+    defaults:  { _controller: TestBundle:Default:index }
+
+node_edit:
+    pattern:      /edit/{id}/
+    defaults:  { _controller: TestBundle:Default:edit }

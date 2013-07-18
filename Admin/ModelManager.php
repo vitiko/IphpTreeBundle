@@ -22,13 +22,7 @@ class ModelManager extends \Sonata\DoctrineORMAdminBundle\Model\ModelManager
             {
                 $afterNode = $this->find(get_class($node), $after);
 
-
-
-          /*      print 'Set'.$node->getTitle().' (parent: '.$node->getParentId().') after '.
-                         $afterNode->getTitle().' (parent: '.$afterNode->getParentId().') ';*/
-
-
-                if (!$afterNode )   throw new ModelManagerException ('Не найден узел c id='.$after);
+                if (!$afterNode )   throw new ModelManagerException ('Node with id id='.$after.' not found');
 
                 if ($afterNode->getParentId() != $node->getParentId())
                     throw new ModelManagerException ('Изменение родителя пока не реализовано - '.$after);
@@ -44,8 +38,4 @@ class ModelManager extends \Sonata\DoctrineORMAdminBundle\Model\ModelManager
     }
 
 
-    /*   function createQuery()
-    {
-
-    }*/
 }
