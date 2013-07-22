@@ -19,6 +19,11 @@ use Gedmo\Tree\Strategy\ORM\Nested as NestedBase;
 class Nested extends NestedBase implements Strategy
 {
 
+    protected function isUseMaterializedPath($config)
+    {
+        return isset($config['path']) && $config['path'] &&
+            isset($config['path_source']) && $config['path_source'];
+    }
 
     public function processScheduledInsertion($em, $node, AdapterInterface $ea)
     {
@@ -26,9 +31,16 @@ class Nested extends NestedBase implements Strategy
 
         $meta = $em->getClassMetadata(get_class($node));
         $properties = $meta->getReflectionProperties();
-        if (isset($properties['fullPath'])) $meta->getReflectionProperty('fullPath')->setValue($node, '/');
-    }
+        $config = $this->listener->getConfiguration($em, $meta->name);
 
+
+        if ($this->isUseMaterializedPath($config) &&
+            isset($config['path_starts_with_separator']) &&
+            $config['path_starts_with_separator'] &&
+            isset($properties[$config['path']])
+        )
+            $meta->getReflectionProperty($config['path'])->setValue($node, $config['path_separator']);
+    }
 
 
     public function processScheduledUpdate($em, $node, AdapterInterface $ea)
@@ -38,16 +50,27 @@ class Nested extends NestedBase implements Strategy
         $meta = $em->getClassMetadata(get_class($node));
         $config = $this->listener->getConfiguration($em, $meta->name);
         $uow = $em->getUnitOfWork();
-
         $changeSet = $uow->getEntityChangeSet($node);
 
 
         // Vitiko: при обновлении рубрики если изменилмся ее путь но не изменились другие данные - обновить fullPath
-        if (isset($changeSet['path']) && !(
+        if ($this->isUseMaterializedPath($config) &&
+            isset($changeSet[$config['path']]) && !(
             isset($changeSet[$config['left']]) || isset($changeSet[$config['parent']]))
         ) {
             $parent = (isset($changeSet[$config['parent']])) ? $changeSet[$config['parent']][1] : $node->getParent();
-            $meta->getReflectionProperty('fullPath')->setValue($node, $parent->getFullPath() . $changeSet['path'][1] . '/');
+            $wrappedParent = AbstractWrapper::wrap($parent, $em);
+
+            $meta->getReflectionProperty($config['path'])
+                ->setValue($node,
+                $wrappedParent->getPropertyValue($config['path']) .
+                    $changeSet[$config['path_source']][1] .
+                    ($config['path_ends_with_separator'] ? $config['path_separator'] : ''));
+        }
+
+
+        if ($this->isUseMaterializedPath($config) && isset($changeSet[$config['parent']])) {
+            $this->updateChildrenPath($em, $node);
         }
     }
 
@@ -55,32 +78,59 @@ class Nested extends NestedBase implements Strategy
     {
         parent::updateNode($em, $node, $parent, $position);
 
+        $this->updateNodePath($em, $node, $parent);
+    }
+
+
+    function updateNodePath($em, $node, $parent)
+    {
+        if (!$parent) return;
         $wrapped = AbstractWrapper::wrap($node, $em);
         $meta = $wrapped->getMetadata();
-        $properties = $meta->getReflectionProperties();
 
-        if ($parent && isset($properties['fullPath'])) {
-            $config = $this->listener->getConfiguration($em, $meta->name);
-            $wrappedParent = AbstractWrapper::wrap($parent, $em);
-            $identifierField = $meta->getSingleIdentifierFieldName();
-            $nodeId = $wrapped->getIdentifier();
-            $oid = spl_object_hash($node);
+        $config = $this->listener->getConfiguration($em, $meta->name);
 
-            $nodeFullPath = $wrappedParent->getPropertyValue('fullPath') . $wrapped->getPropertyValue('path') . '/';
+        if (!$this->isUseMaterializedPath($config)) return;
+        $wrappedParent = AbstractWrapper::wrap($parent, $em);
+
+        //this nodes in delayed
+        $parentLeft = $wrappedParent->getPropertyValue($config['left']);
+        $parentRight = $wrappedParent->getPropertyValue($config['right']);
+        if (empty($parentLeft) && empty($parentRight)) return;
 
 
-            $qb = $em->createQueryBuilder();
-            $qb->update($config['useObjectClass'], 'node');
-            $qb->set('node.fullPath', $qb->expr()->literal($nodeFullPath));
-            // node id cannot be null
-            $qb->where($qb->expr()->eq('node.'.$identifierField, is_string($nodeId) ? $qb->expr()->literal($nodeId) : $nodeId));
-            $qb->getQuery()->getSingleScalarResult();
+        $nodeFullPath = $wrappedParent->getPropertyValue($config['path']) .
+            $wrapped->getPropertyValue($config['path_source']) .
+            ($config['path_ends_with_separator'] ? $config['path_separator'] : '');
 
-            $wrapped->setPropertyValue('fullPath', $nodeFullPath );
-            $em->getUnitOfWork()->setOriginalEntityProperty($oid, 'fullPath', $nodeFullPath);
-        }
+
+        $identifierField = $meta->getSingleIdentifierFieldName();
+        $nodeId = $wrapped->getIdentifier();
+        $qb = $em->createQueryBuilder();
+        $qb->update($config['useObjectClass'], 'node');
+        $qb->set('node.' . $config['path'], $qb->expr()->literal($nodeFullPath));
+        // node id cannot be null
+        $qb->where($qb->expr()->eq('node.' . $identifierField, is_string($nodeId) ? $qb->expr()->literal($nodeId) : $nodeId));
+        $qb->getQuery()->getSingleScalarResult();
+
+        $oid = spl_object_hash($node);
+        $wrapped->setPropertyValue($config['path'], $nodeFullPath);
+        $em->getUnitOfWork()->setOriginalEntityProperty($oid, $config['path'], $nodeFullPath);
 
     }
 
+
+    function updateChildrenPath($em, $node)
+    {
+        $wrapped = AbstractWrapper::wrap($node, $em);
+        $meta = $wrapped->getMetadata();
+        $config = $this->listener->getConfiguration($em, $meta->name);
+
+
+        foreach ($em->getRepository($config['useObjectClass'])->children($node, false, $config['left']) as $child) {
+            $this->updateNodePath($em, $child, $child->getParent());
+
+        }
+    }
 
 }

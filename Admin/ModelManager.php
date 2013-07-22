@@ -7,33 +7,39 @@ class ModelManager extends \Sonata\DoctrineORMAdminBundle\Model\ModelManager
 {
 
 
-    function changePosition($node, $parent, $after)
+    function changePosition($node, $parentId, $afterId)
     {
-        $changeParent = $node->getParentId() != $parent;
+        $changeParent =
 
         $entityManager = $this->getEntityManager($node);
         $repository = $entityManager->getRepository(get_class($node));
 
 
-        if (!$changeParent)
+
+        //print "change: ".$node->getId().", parent:".$parentId.", after: ".$afterId;
+
+
+        if ($afterId != '0')
         {
-            if ($after == '0') $repository->persistAsFirstChild($node);
-            else
-            {
-                $afterNode = $this->find(get_class($node), $after);
-
-                if (!$afterNode )   throw new ModelManagerException ('Node with id id='.$after.' not found');
-
-                if ($afterNode->getParentId() != $node->getParentId())
-                    throw new ModelManagerException ('Изменение родителя пока не реализовано - '.$after);
-                $repository->persistAsNextSiblingOf($node, $afterNode);
-            }
-            $entityManager->flush();
+            $afterNode = $this->find(get_class($node), $afterId);
+            if (!$afterNode )   throw new ModelManagerException ('Node with id id='.$afterId.' not found');
+            $repository->persistAsNextSiblingOf($node, $afterNode);
         }
         else
         {
-            throw new ModelManagerException ('Изменение родителя пока не реализовано '. $node->getParentId().' '.$parent);
+             if ($node->getParentId() == $parentId)
+             {
+                 $repository->persistAsFirstChild($node);
+             }
+            else
+            {
+                $parentObj = $this->find(get_class($node), $parentId);
+                if (!$parentObj ) throw new ModelManagerException ('Parent node with id id='.$parentId.' not found');
+
+                $repository->persistAsFirstChildOf($node, $parentObj);
+            }
         }
+        $entityManager->flush();
 
     }
 

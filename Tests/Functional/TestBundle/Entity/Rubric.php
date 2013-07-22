@@ -55,12 +55,14 @@ class Rubric
 
 
     /**
+     * @Gedmo\TreePathSource
      * @ORM\Column(name="path", type="string", length=64)
      */
     private $path;
 
 
     /**
+     * @Gedmo\TreePath (separator="/", startsWithSeparator=true)
      * @ORM\Column(name="fullPath", type="string", length=3000, nullable=true)
      */
     private $fullPath;
@@ -184,6 +186,11 @@ class Rubric
     public function getFullPath()
     {
         return $this->fullPath;
+    }
+
+    function __toString()
+    {
+        return (string) $this->getTitle();
     }
 
 
