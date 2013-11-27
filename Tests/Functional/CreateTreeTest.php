@@ -18,33 +18,9 @@ class CreateTreeTest extends BaseTestCase
      */
     public function testCreateTree()
     {
-        $client = $this->createClient();
-        $this->importDatabaseSchema();
 
+        $this->loadFixtures();
 
-        $food = new Rubric();
-        $food->setTitle('Food')->setPath('');
-
-        $fruits = new Rubric();
-        $fruits->setTitle('Fruits')->setPath('fr')->setParent($food);
-
-        $vegetables = new Rubric();
-        $vegetables->setTitle('Vegetables')->setPath('vg')->setParent($food);
-
-        $carrots = new Rubric();
-        $carrots->setTitle('Carrots')->setPath('cr')->setParent($vegetables);
-
-
-        $meat = new Rubric();
-        $meat->setTitle('Meat')->setPath('mt')->setParent($food);
-
-
-        $this->getEntityManager()->persist($food);
-        $this->getEntityManager()->persist($fruits);
-        $this->getEntityManager()->persist($vegetables);
-        $this->getEntityManager()->persist($carrots);
-        $this->getEntityManager()->persist($meat);
-        $this->getEntityManager()->flush();
 
         $repo = $this->getEntityManager()->getRepository('TestBundle:Rubric');
         $rubrics = $repo->findBy(  array(), array('lft' => 'ASC')  );
@@ -207,26 +183,13 @@ class CreateTreeTest extends BaseTestCase
         }
 
 
-        $secondLevelRubric = $repo->findOneBy(  array('fullPath' => '/fr/mt/'));
 
-        $this->assertSame ($secondLevelRubric->getFullPath (),'/fr/mt/' );
-        $this->assertSame ($secondLevelRubric->getPath (),'mt' );
-
-        $secondLevelRubric->setPath ('mt-new');
-
-        $this->getEntityManager()->persist($secondLevelRubric);
-        $this->getEntityManager()->flush();
-
-
-        $secondLevelRubricUpdated = $repo->findOneByTitle ('Meat');
-
-
-
-
-        $this->assertSame ($secondLevelRubricUpdated->getFullPath (), '/fr/mt-new/' );
 
 
         //  print_r ($arrayTree);
     }
+
+
+
 
 }

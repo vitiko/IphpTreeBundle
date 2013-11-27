@@ -2,6 +2,8 @@
 namespace Iphp\TreeBundle\Tests\Functional;
 
 use Symfony\Component\Filesystem\Filesystem;
+use Iphp\TreeBundle\Tests\Functional\TestBundle\Entity\Rubric;
+
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
@@ -58,5 +60,37 @@ class BaseTestCase extends WebTestCase
             $schemaTool->dropDatabase();
             $schemaTool->createSchema($metadata);
         }
+    }
+
+
+    protected function loadFixtures()
+    {
+        $client = $this->createClient();
+        $this->importDatabaseSchema();
+
+
+        $food = new Rubric();
+        $food->setTitle('Food')->setPath('');
+
+        $fruits = new Rubric();
+        $fruits->setTitle('Fruits')->setPath('fr')->setParent($food);
+
+        $vegetables = new Rubric();
+        $vegetables->setTitle('Vegetables')->setPath('vg')->setParent($food);
+
+        $carrots = new Rubric();
+        $carrots->setTitle('Carrots')->setPath('cr')->setParent($vegetables);
+
+
+        $meat = new Rubric();
+        $meat->setTitle('Meat')->setPath('mt')->setParent($food);
+
+
+        $this->getEntityManager()->persist($food);
+        $this->getEntityManager()->persist($fruits);
+        $this->getEntityManager()->persist($vegetables);
+        $this->getEntityManager()->persist($carrots);
+        $this->getEntityManager()->persist($meat);
+        $this->getEntityManager()->flush();
     }
 }
