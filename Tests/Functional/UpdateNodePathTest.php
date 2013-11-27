@@ -35,15 +35,15 @@ class UpdateNodePathTest extends BaseTestCase
         $this->getEntityManager()->persist($secondLevelRubric);
         $this->getEntityManager()->flush();
 
-     
+
         $this->assertSame($secondLevelRubric->getFullPath(), '/vg/cr-new/');
 
 
 
-        /*
-       $secondLevelRubricUpdated = $repo->findOneByTitle('Meat');
+
+       $secondLevelRubricUpdated = $repo->findOneByTitle('Carrots');
 
 
-       $this->assertSame($secondLevelRubricUpdated->getFullPath(), '/fr/mt-new/');*/
+       $this->assertSame($secondLevelRubricUpdated->getFullPath(), '/vg/cr-new/');
     }
 }

@@ -55,9 +55,11 @@ class Nested extends NestedBase implements Strategy
 
         // Vitiko: при обновлении рубрики если изменилмся ее путь но не изменились другие данные - обновить fullPath
         if ($this->isUseMaterializedPath($config) &&
-            isset($changeSet[$config['path']]) && !(
+            isset($changeSet[$config['path_source']]) && !(
             isset($changeSet[$config['left']]) || isset($changeSet[$config['parent']]))
         ) {
+
+
             $parent = (isset($changeSet[$config['parent']])) ? $changeSet[$config['parent']][1] : $node->getParent();
             $wrappedParent = AbstractWrapper::wrap($parent, $em);
 
