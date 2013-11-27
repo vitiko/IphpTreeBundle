@@ -204,10 +204,27 @@ class CreateTreeTest extends BaseTestCase
             foreach ($afterUpdateSiblingData[$pos] as $property => $value) {
                 $this->assertSame($rubric->{'get' . ucfirst($property)}(), $value);
             }
-
-
-
         }
+
+
+        $secondLevelRubric = $repo->findOneBy(  array('fullPath' => '/fr/mt/'));
+
+        $this->assertSame ($secondLevelRubric->getFullPath (),'/fr/mt/' );
+        $this->assertSame ($secondLevelRubric->getPath (),'mt' );
+
+        $secondLevelRubric->setPath ('mt-new');
+
+        $this->getEntityManager()->persist($secondLevelRubric);
+        $this->getEntityManager()->flush();
+
+
+        $secondLevelRubricUpdated = $repo->findOneByTitle ('Meat');
+
+
+
+
+        $this->assertSame ($secondLevelRubricUpdated->getFullPath (), '/fr/mt-new/' );
+
 
         //  print_r ($arrayTree);
     }
