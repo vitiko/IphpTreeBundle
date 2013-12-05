@@ -71,7 +71,8 @@ class Nested extends NestedBase implements Strategy
         }
 
 
-        if ($this->isUseMaterializedPath($config) && isset($changeSet[$config['parent']])) {
+        if ($this->isUseMaterializedPath($config) &&
+             (isset($changeSet[$config['parent']]) || isset($changeSet[$config['path_source']]))) {
             $this->updateChildrenPath($em, $node);
         }
     }
