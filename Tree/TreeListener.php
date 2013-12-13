@@ -32,9 +32,16 @@ class TreeListener extends BaseTreeListener
             } elseif ($om instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
                 $managerName = 'ODM';
             }
-            if (!isset($this->strategyInstances[$config['strategy']])) {
+            if (!isset($this->myStrategyInstances[$config['strategy']])) {
+
+                //First try local strategy implementation
                 $strategyClass =   '\\Iphp\\TreeBundle\\Tree\\Strategy\\'  . ucfirst($config['strategy']);
                 if (!class_exists($strategyClass)) {
+
+                    $strategyClass = '\\Gedmo\\Tree\\Strategy\\'.$managerName.'\\'.ucfirst($config['strategy']);
+
+
+                    if (!class_exists($strategyClass))
                     throw new \Gedmo\Exception\InvalidArgumentException($managerName . " TreeListener does not support tree type: {$config['strategy']}");
                 }
                 $this->myStrategyInstances[$config['strategy']] = new $strategyClass($this);
