@@ -22,7 +22,7 @@ class Nested extends NestedBase implements Strategy
     protected function isUseMaterializedPath($config)
     {
         return isset($config['path']) && $config['path'] &&
-            isset($config['path_source']) && $config['path_source'];
+        isset($config['path_source']) && $config['path_source'];
     }
 
     public function processScheduledInsertion($em, $node, AdapterInterface $ea)
@@ -56,7 +56,7 @@ class Nested extends NestedBase implements Strategy
         // Vitiko: при обновлении рубрики если изменилмся ее путь но не изменились другие данные - обновить fullPath
         if ($this->isUseMaterializedPath($config) &&
             isset($changeSet[$config['path_source']]) && !(
-            isset($changeSet[$config['left']]) || isset($changeSet[$config['parent']]))
+                isset($changeSet[$config['left']]) || isset($changeSet[$config['parent']]))
         ) {
 
 
@@ -65,14 +65,15 @@ class Nested extends NestedBase implements Strategy
 
             $meta->getReflectionProperty($config['path'])
                 ->setValue($node,
-                $wrappedParent->getPropertyValue($config['path']) .
+                    $wrappedParent->getPropertyValue($config['path']) .
                     $changeSet[$config['path_source']][1] .
                     ($config['path_ends_with_separator'] ? $config['path_separator'] : ''));
         }
 
 
         if ($this->isUseMaterializedPath($config) &&
-             (isset($changeSet[$config['parent']]) || isset($changeSet[$config['path_source']]))) {
+            (isset($changeSet[$config['parent']]) || isset($changeSet[$config['path_source']]))
+        ) {
             $this->updateChildrenPath($em, $node);
         }
     }
@@ -87,24 +88,31 @@ class Nested extends NestedBase implements Strategy
 
     function updateNodePath($em, $node, $parent)
     {
-        if (!$parent) return;
+
         $wrapped = AbstractWrapper::wrap($node, $em);
         $meta = $wrapped->getMetadata();
 
         $config = $this->listener->getConfiguration($em, $meta->name);
 
         if (!$this->isUseMaterializedPath($config)) return;
-        $wrappedParent = AbstractWrapper::wrap($parent, $em);
 
-        //this nodes in delayed
-        $parentLeft = $wrappedParent->getPropertyValue($config['left']);
-        $parentRight = $wrappedParent->getPropertyValue($config['right']);
-        if (empty($parentLeft) && empty($parentRight)) return;
+        if ($parent) {
 
 
-        $nodeFullPath = $wrappedParent->getPropertyValue($config['path']) .
-            $wrapped->getPropertyValue($config['path_source']) .
-            ($config['path_ends_with_separator'] ? $config['path_separator'] : '');
+            $wrappedParent = AbstractWrapper::wrap($parent, $em);
+
+            //this nodes in delayed
+            $parentLeft = $wrappedParent->getPropertyValue($config['left']);
+            $parentRight = $wrappedParent->getPropertyValue($config['right']);
+            if (empty($parentLeft) && empty($parentRight)) return;
+
+            $nodeFullPath = $wrappedParent->getPropertyValue($config['path']) .
+                $wrapped->getPropertyValue($config['path_source']) .
+                ($config['path_ends_with_separator'] ? $config['path_separator'] : '');
+        }
+        else $nodeFullPath = $config['path_separator'];
+
+
 
 
         $identifierField = $meta->getSingleIdentifierFieldName();
