@@ -45,14 +45,14 @@ interface TreeNodeInterface
     /**
      * Get children
      *
-     * @return Doctrine\Common\Collections\Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getChildren();
 
     /**
      * Add children
      *
-     * @param Iphp\TreeBundle\Model\TreeNodeInterface $children
+     * @param \Iphp\TreeBundle\Model\TreeNodeInterface $children
      */
     public function addChildren(TreeNodeInterface $children);
 }
