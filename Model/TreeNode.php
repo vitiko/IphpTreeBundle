@@ -72,6 +72,7 @@ abstract class TreeNode implements TreeNodeInterface
     public function setTitle($title)
     {
         $this->title = $title;
+        return $this;
     }
 
     /**
