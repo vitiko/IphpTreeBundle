@@ -158,6 +158,7 @@ abstract class TreeNode implements TreeNodeInterface
     public function setParent(TreeNodeInterface $parent = null)
     {
         $this->parent = $parent;
+        return $this;
     }
 
     public function getParent()
