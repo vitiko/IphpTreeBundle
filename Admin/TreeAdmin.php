@@ -12,7 +12,12 @@ class TreeAdmin extends Admin
 
     function getListTemplate()
     {
-        return 'IphpTreeBundle:CRUD:tree.html.twig';
+        $container = $this->getConfigurationPool()->getContainer();
+        if ($container->hasParameter('expand_rubrics') and $container->getParameter('expand_rubrics') == true){
+            return 'IphpTreeBundle:CRUD:treeCollapsible.html.twig';
+        } else {
+            return 'IphpTreeBundle:CRUD:tree.html.twig';
+        }
     }
 
     protected function configureRoutes(RouteCollection $collection)
