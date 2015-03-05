@@ -23,11 +23,15 @@
     $( document ).ready(function() {
         $(".expand-collapse").click(function(){
             var ol = $(this).closest("li").children("ol");
-            if ($(this).text() == "+"){
-                $(this).text("-");
+            $(this).toggleClass("fa-plus-square");
+            $(this).toggleClass("fa-minus-square");
+
+            /*if ($(this).hasClass("fa-plus-square")){
+                $(this).removeClass("");
+                //$(this).text("-");
             } else {
                 $(this).text("+");
-            }
+            }*/
             ol.toggle();
 
             console.log($(this).text(), 26);
@@ -66,7 +70,7 @@
           <div>
            <table class="trtable"><tr>
                 {% if (wrappedNode.hasChildren) %}
-                    <td style="width: 25px; cursor: pointer" class="expand-collapse">+</td>
+                    <td style="width: 25px; cursor: pointer"><i class="expand-collapse fa fa-plus-square fa-fw"></i></td>
                 {% else %}
                     <td style="width: 25px;">&nbsp;</td>
                 {% endif %}
