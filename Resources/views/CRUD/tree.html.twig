@@ -68,14 +68,18 @@
 
 
      {% set rootWrappedNode =   treeIterator.current%}
+        
+     {% set rootItemShow = admin.rootItemShow is defined and admin.rootItemShow==false ? false : true %}
 
-     <!-- root node -->
-     <table class="trtable" id="rootnodetable" nodeId="{{ rootWrappedNode.id }}"><tr>
-         {% for field_description in admin.list.elements %}
-                           {{ rootWrappedNode.node|render_list_element(field_description) }}
-         {% endfor %}
-      </tr></table>
-
+      {% if rootItemShow %}
+         <!-- root node -->
+         <table class="trtable" id="rootnodetable" nodeId="{{ rootWrappedNode.id }}"><tr>
+             {% for field_description in admin.list.elements %}
+                               {{ rootWrappedNode.node|render_list_element(field_description) }}
+             {% endfor %}
+          </tr></table>
+     {% endif %}
+     
       <ol class="sortable">
       {% for wrappedNode in rootWrappedNode.children %}
         {{ _self.nodeOutput(wrappedNode,admin)}}

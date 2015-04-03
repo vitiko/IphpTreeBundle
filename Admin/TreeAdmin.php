@@ -9,7 +9,8 @@ use Iphp\TreeBundle\Model\TreeNodeIterator;
 class TreeAdmin extends Admin
 {
 
-
+    protected $rootItemShow=true;
+    
     function getListTemplate()
     {
         $container = $this->getConfigurationPool()->getContainer();
@@ -94,6 +95,10 @@ class TreeAdmin extends Admin
         }
 
         return null;
+    }
+    
+    public function isRootItemShow(){
+        return $this->rootItemShow;
     }
 
 
