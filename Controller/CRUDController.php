@@ -5,6 +5,7 @@ namespace Iphp\TreeBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpFoundation\Request;
 use Sonata\AdminBundle\Controller\CRUDController as SonataCRUDController;
 
 class CRUDController extends SonataCRUDController
@@ -40,7 +41,7 @@ class CRUDController extends SonataCRUDController
     }
 
 
-    public function listAction()
+    public function listAction(Request $request = null)
     {
         if (false === $this->admin->isGranted('LIST')) {
             throw new AccessDeniedException();
