@@ -18,7 +18,7 @@
     
     
     "require": {
-        "symfony/framework-bundle":">=2.2@stable",
+        "symfony/framework-bundle":"~2.3@stable",
     	"stof/doctrine-extensions-bundle": "@stable"
     },
 
